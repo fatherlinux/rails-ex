@@ -6,17 +6,18 @@ This quickstart utilizes an OpenShift/Atomic Platform Service Object which is li
 
 Usage
 This quickstart can be manually provisioned or driven from Ansible, CloudForms or other automated means by instantiating it with the following format:
-oc process -f /root/rails-ex-external/openshift/templates/rails-postgresql.json -v DATABASE_SERVICE_PORT=5432,DATABASE_SERVICE_HOST=${DB_IP_ADDRESS},DATABASE_USER=${DB_USERNAME},DATABASE_PASSWORD=${DB_PASSWORD},DATABASE_NAME=${DB_NAME}
+   ```oc process -f /root/rails-ex-external/openshift/templates/rails-postgresql.json -v DATABASE_SERVICE_PORT=5432,DATABASE_SERVICE_HOST=${DB_IP_ADDRESS},DATABASE_USER=${DB_USERNAME},DATABASE_PASSWORD=${DB_PASSWORD},DATABASE_NAME=${DB_NAME}```
 
 
 Hack Usage
 This is not propor usage, but might be useful for getting it up and running. There are a couple of work arounds that need explained. First, sleep was used to solve some kind of concurrency problem where old objects were not deleted before "oc new-project" tried to create them again, causing a failure. Second, sed was used to fix a small bug in the oc process command [4].
-  export KUBECONFIG=/etc/origin/master/admin.kubeconfig
+  
+  ```export KUBECONFIG=/etc/origin/master/admin.kubeconfig
   /bin/oc delete namespace test
   sleep 15
   /bin/oc new-project test
   oc process -f /root/rails-ex-external/openshift/templates/rails-postgresql.json -v DATABASE_SERVICE_PORT=5432,DATABASE_SERVICE_HOST=${DB_IP_ADDRESS},DATABASE_USER=${DB_USERNAME},DATABASE_PASSWORD=${DB_PASSWORD},DATABASE_NAME=${DB_NAME} | sed -e 's/"port": "5432"/"port": 5432/g' | oc create -f -
-oc policy add-role-to-user admin admin -n test
+oc policy add-role-to-user admin admin -n test```
 
 
 [1]: https://github.com/openshift/rails-ex
