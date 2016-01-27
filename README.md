@@ -19,7 +19,9 @@ This is not propor usage, but might be useful for getting it up and running. The
   oc process -f /root/rails-ex-external/openshift/templates/rails-postgresql.json -v DATABASE_SERVICE_PORT=5432,DATABASE_SERVICE_HOST=${DB_IP_ADDRESS},DATABASE_USER=${DB_USERNAME},DATABASE_PASSWORD=${DB_PASSWORD},DATABASE_NAME=${DB_NAME} | sed -e 's/"port": "5432"/"port": 5432/g' | oc create -f -
 oc policy add-role-to-user admin admin -n test```
 
+##Citations##
 
 [1]: https://github.com/openshift/rails-ex
 [2]: https://docs.openshift.com/enterprise/3.0/dev_guide/integrating_external_services.html
 [3]: https://github.com/fatherlinux/workshop
+[4]: https://bugzilla.redhat.com/show_bug.cgi?id=1277188
