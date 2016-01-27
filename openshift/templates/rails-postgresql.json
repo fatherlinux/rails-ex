@@ -178,6 +178,14 @@
                     "value": "${DATABASE_SERVICE_NAME}"
                   },
                   {
+                    "name": "DATABASE_SERVICE_HOST",
+                    "value": "${DATABASE_SERVICE_HOST}"
+                  },
+                  {
+                    "name": "DATABASE_SERVICE_PORT",
+                    "value": "${DATABASE_SERVICE_PORT}"
+                  },
+                  {
                     "name": "POSTGRESQL_USER",
                     "value": "${DATABASE_USER}"
                   },
@@ -245,91 +253,26 @@
             "targetPort": 5432
           }
         ],
-        "selector": {
-          "name": "${DATABASE_SERVICE_NAME}"
-        }
+        "selector": {}
       }
     },
+
     {
-      "kind": "DeploymentConfig",
+      "kind": "Endpoints",
       "apiVersion": "v1",
       "metadata": {
-        "name": "${DATABASE_SERVICE_NAME}",
-        "annotations": {
-          "description": "Defines how to deploy the database"
-        }
+        "name": "${DATABASE_SERVICE_NAME}"
       },
-      "spec": {
-        "strategy": {
-          "type": "Recreate"
-        },
-        "triggers": [
-          {
-            "type": "ImageChange",
-            "imageChangeParams": {
-              "automatic": false,
-              "containerNames": [
-                "postgresql"
-              ],
-              "from": {
-                "kind": "ImageStreamTag",
-                "namespace": "openshift",
-                "name": "postgresql:9.4"
-              }
-            }
-          },
-          {
-            "type": "ConfigChange"
-          }
-        ],
-        "replicas": 1,
-        "selector": {
-          "name": "${DATABASE_SERVICE_NAME}"
-        },
-        "template": {
-          "metadata": {
-            "name": "${DATABASE_SERVICE_NAME}",
-            "labels": {
-              "name": "${DATABASE_SERVICE_NAME}"
-            }
-          },
-          "spec": {
-            "containers": [
-              {
-                "name": "postgresql",
-                "image": "postgresql",
-                "ports": [
-                  {
-                    "containerPort": 5432
-                  }
-                ],
-                "env": [
-                  {
-                    "name": "POSTGRESQL_USER",
-                    "value": "${DATABASE_USER}"
-                  },
-                  {
-                    "name": "POSTGRESQL_PASSWORD",
-                    "value": "${DATABASE_PASSWORD}"
-                  },
-                  {
-                    "name": "POSTGRESQL_DATABASE",
-                    "value": "${DATABASE_NAME}"
-                  },
-                  {
-                    "name": "POSTGRESQL_MAX_CONNECTIONS",
-                    "value": "${POSTGRESQL_MAX_CONNECTIONS}"
-                  },
-                  {
-                    "name": "POSTGRESQL_SHARED_BUFFERS",
-                    "value": "${POSTGRESQL_SHARED_BUFFERS}"
-                  }
-                ]
-              }
-            ]
-          }
+      "subsets": [ 
+        {
+          "addresses":  [
+            { "IP": "${DATABASE_SERVICE_HOST}" } 
+          ],
+          "ports":  [
+            { "port": 5432, "name": "postgresql" } 
+          ]
         }
-      }
+      ]
     }
   ],
   "parameters": [
@@ -349,7 +292,7 @@
     {
       "name": "APPLICATION_DOMAIN",
       "description": "The exposed hostname that will route to the Rails service, if left blank a value will be defaulted.",
-      "value": ""
+      "value": "rails-postgres.apps-0.jan2016trial.syseng.us"
     },
     {
       "name": "GITHUB_WEBHOOK_SECRET",
@@ -382,6 +325,16 @@
       "name": "DATABASE_SERVICE_NAME",
       "description": "Database service name",
       "value": "postgresql"
+    },
+    {
+      "name": "DATABASE_SERVICE_HOST",
+      "description": "Database host name",
+      "value": "localhost"
+    },
+    {
+      "name": "DATABASE_SERVICE_PORT",
+      "description": "Database TCP Port",
+      "value": "5432"
     },
     {
       "name": "DATABASE_USER",
